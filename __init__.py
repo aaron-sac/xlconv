@@ -1,2 +1,2 @@
 
-from src import encode, decode, passthrough
+from .src import encode, decode, passthrough
