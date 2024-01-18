@@ -20,8 +20,16 @@ def encode(source, target):
     csv_writer = csv.writer(output, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, lineterminator='\n')
     for sheet_name in workbook.sheetnames:
         output.write(MAGIC % sheet_name + '\n')
+        header = True
         for row in workbook[sheet_name]:
             cells = [c.value.replace('\r\n', '\n').replace('\r', '\n') if isinstance(c.value, str) else c.value for c in row]
+            if header:
+                cells = [(str(c) if isinstance(c, str) else 'field')[:32].strip() for c in cells]
+                ix = 0
+                for c in cells:
+                    cells[ix] = c if cells.count(c) == 1 else f'{c}_{ix}'
+                    ix += 1
+                header = False
             if any(cells):
                 csv_writer.writerow(cells)
 
